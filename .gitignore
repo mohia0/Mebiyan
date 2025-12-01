@@ -1,0 +1,8 @@
+# Ignore 3D globe files
+globe_3d_motion.html
+Layer_1.svg
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
