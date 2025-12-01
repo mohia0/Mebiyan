@@ -53,7 +53,7 @@
             justify-content: center;
             gap: 0.75rem;
             padding: 0.5rem 0.9rem;
-            border-radius: 999px;
+            border-radius: 0;
             background: rgba(8, 8, 12, 0.96);
             box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
             backdrop-filter: blur(14px);
@@ -68,10 +68,10 @@
         }
 
         button {
-            background: linear-gradient(135deg, #00c6ff, #00e6b8);
-            border: none;
-            border-radius: 999px;
-            color: #050508;
+            background: #ffffff;
+            border: 1px solid #000000;
+            border-radius: 0;
+            color: #000000;
             font-weight: 600;
             padding: 0.45rem 0.9rem;
             font-size: 0.8rem;
@@ -79,20 +79,23 @@
             letter-spacing: 0.04em;
             text-transform: uppercase;
             transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-            box-shadow: 0 10px 25px rgba(0, 198, 255, 0.4);
+            box-shadow: none;
             white-space: nowrap;
         }
 
         button:disabled {
             cursor: not-allowed;
-            background: #606060;
-            color: #cfcfcf;
+            background: #808080;
+            color: #ffffff;
+            border-color: #808080;
             box-shadow: none;
         }
 
         button:not(:disabled):hover {
             transform: translateY(-1px);
-            box-shadow: 0 14px 32px rgba(0, 198, 255, 0.6);
+            background: #000000;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         #export-status {
@@ -138,8 +141,8 @@
             -webkit-appearance: none;
             appearance: none;
             height: 3px;
-            border-radius: 999px;
-            background: #23232a;
+            border-radius: 0;
+            background: #808080;
             outline: none;
         }
 
@@ -148,31 +151,31 @@
             appearance: none;
             width: 12px;
             height: 12px;
-            border-radius: 50%;
-            background: #00c6ff;
-            box-shadow: 0 0 0 4px rgba(0, 198, 255, 0.4);
+            border-radius: 0;
+            background: #000000;
+            box-shadow: 0 0 0 2px #ffffff;
             cursor: pointer;
-            border: none;
+            border: 1px solid #000000;
         }
 
         input[type="range"]::-moz-range-thumb {
             width: 12px;
             height: 12px;
-            border-radius: 50%;
-            background: #00c6ff;
-            box-shadow: 0 0 0 4px rgba(0, 198, 255, 0.4);
+            border-radius: 0;
+            background: #000000;
+            box-shadow: 0 0 0 2px #ffffff;
             cursor: pointer;
-            border: none;
+            border: 1px solid #000000;
         }
 
         .toggle-group input {
-            accent-color: #00c6ff;
+            accent-color: #000000;
             cursor: pointer;
         }
 
         .select-group select {
             padding: 0.25rem 0.7rem;
-            border-radius: 999px;
+            border-radius: 0;
             border: 1px solid rgba(90, 90, 110, 0.8);
             background: #15151b;
             color: #f5f5f5;
@@ -196,7 +199,7 @@
         .svg-preview-item {
             width: 32px;
             height: 32px;
-            border-radius: 4px;
+            border-radius: 0;
             border: 2px solid transparent;
             cursor: pointer;
             overflow: hidden;
@@ -210,12 +213,12 @@
 
         .svg-preview-item:hover {
             transform: scale(1.1);
-            border-color: rgba(0, 198, 255, 0.5);
+            border-color: rgba(0, 0, 0, 0.5);
         }
 
         .svg-preview-item.active {
-            border-color: #00c6ff;
-            background: rgba(0, 198, 255, 0.1);
+            border-color: #000000;
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .svg-preview-item object {
@@ -232,10 +235,35 @@
             width: 200px;
             height: 3px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            border-radius: 0;
             overflow: hidden;
             display: none;
             z-index: 15;
+        }
+
+        .screenshot-menu {
+            position: fixed;
+            bottom: 4.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            flex-direction: column;
+            gap: 0.25rem;
+            z-index: 20;
+            background: rgba(8, 8, 12, 0.98);
+            border: 1px solid rgba(120, 120, 140, 0.5);
+            padding: 0.5rem;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+        }
+
+        .screenshot-menu button {
+            width: 100%;
+            min-width: 120px;
+            margin: 0;
+        }
+
+        .screenshot-menu.show {
+            display: flex;
         }
 
         .tool-title {
@@ -290,7 +318,7 @@
         .progress-bar {
             width: 0%;
             height: 100%;
-            background: #00c6ff;
+            background: #000000;
             transition: width 0.2s ease;
         }
     </style>
@@ -348,16 +376,13 @@
             <span class="control-label">Loop</span>
         </label>
 
-        <div class="control-group select-group">
-            <span class="control-label">FPS</span>
-            <select id="fps-select">
-                <option value="30">30</option>
-                <option value="60" selected>60</option>
-            </select>
-        </div>
-
+        <button id="export-screenshot">Screenshot</button>
         <button id="export-gif">Export GIF</button>
 
+    </div>
+    <div class="screenshot-menu" id="screenshot-menu">
+        <button id="export-svg">Save as SVG</button>
+        <button id="export-png">Save as PNG</button>
     </div>
     <div class="progress-container" id="progress-container">
         <div class="progress-bar" id="progress-bar"></div>
@@ -393,10 +418,13 @@
         const sizeValue = document.getElementById('size-value');
         const loopToggle = document.getElementById('loop-toggle');
         const vectorColorSelect = document.getElementById('vector-color');
-        const fpsSelect = document.getElementById('fps-select');
         const motionTypeSelect = document.getElementById('motion-type');
         const svgPreviewContainer = document.getElementById('svg-preview-container');
-        let currentSelectedSvg = 'Opt 2/01.svg';
+        const screenshotButton = document.getElementById('export-screenshot');
+        const screenshotMenu = document.getElementById('screenshot-menu');
+        const exportSvgButton = document.getElementById('export-svg');
+        const exportPngButton = document.getElementById('export-png');
+        let currentSelectedSvg = 'Opt 2/10.svg';
         const progressContainer = document.getElementById('progress-container');
         const progressBar = document.getElementById('progress-bar');
         const captureCanvas = document.createElement('canvas');
@@ -859,14 +887,14 @@
 
         // Create SVG preview selector
         const svgFiles = [
-            'Opt 2/01.svg', 'Opt 2/02.svg', 'Opt 2/03.svg', 'Opt 2/04.svg', 'Opt 2/05.svg',
-            'Opt 2/06.svg', 'Opt 2/07.svg', 'Opt 2/08.svg', 'Opt 2/09.svg', 'Opt 2/10.svg'
+            'Opt 2/10.svg', 'Opt 2/01.svg', 'Opt 2/02.svg', 'Opt 2/03.svg', 'Opt 2/04.svg',
+            'Opt 2/05.svg', 'Opt 2/06.svg', 'Opt 2/07.svg', 'Opt 2/08.svg', 'Opt 2/09.svg'
         ];
 
         function createSvgPreview(filePath, index) {
             const previewItem = document.createElement('div');
             previewItem.className = 'svg-preview-item';
-            if (index === 0) previewItem.classList.add('active');
+            if (filePath === 'Opt 2/10.svg') previewItem.classList.add('active');
             
             // Use object element for better SVG rendering
             const svgObject = document.createElement('object');
@@ -1012,8 +1040,7 @@
         }
 
         function getSelectedFps() {
-            const fps = parseInt(fpsSelect.value, 10);
-            return Number.isFinite(fps) && fps > 0 ? fps : 30;
+            return 60;
         }
 
         async function exportGif() {
@@ -1133,6 +1160,73 @@
         }
 
         exportButton.addEventListener('click', exportGif);
+
+        // Screenshot functionality
+        screenshotButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            screenshotMenu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!screenshotMenu.contains(e.target) && e.target !== screenshotButton) {
+                screenshotMenu.classList.remove('show');
+            }
+        });
+
+        async function exportScreenshot(format) {
+            if (!currentSVG) return;
+            
+            screenshotMenu.classList.remove('show');
+            updateStatus('Preparing screenshot...');
+
+            const viewBox = currentSVG.viewBox?.baseVal;
+            if (!viewBox) {
+                updateStatus('Error: No viewBox found');
+                return;
+            }
+
+            const clampedSize = Math.max(0.5, Math.min(2, currentSize));
+            const safetyFactor = 1.05;
+            const baseExportWidth = Math.round(viewBox.width);
+            const baseExportHeight = Math.round(viewBox.height);
+            const exportWidth = Math.round(baseExportWidth * clampedSize * safetyFactor);
+            const exportHeight = Math.round(baseExportHeight * clampedSize * safetyFactor);
+
+            if (format === 'svg') {
+                const svgString = serializeSvg();
+                const blob = new Blob([svgString], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.href = url;
+                anchor.download = `screenshot-${currentSelectedSvg.split('/').pop().replace('.svg', '')}.svg`;
+                document.body.appendChild(anchor);
+                anchor.click();
+                anchor.remove();
+                URL.revokeObjectURL(url);
+                updateStatus('SVG saved');
+            } else if (format === 'png') {
+                captureCanvas.width = exportWidth;
+                captureCanvas.height = exportHeight;
+                
+                await drawSvgToCanvas();
+                
+                captureCanvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const anchor = document.createElement('a');
+                    anchor.href = url;
+                    anchor.download = `screenshot-${currentSelectedSvg.split('/').pop().replace('.svg', '')}.png`;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    anchor.remove();
+                    URL.revokeObjectURL(url);
+                    updateStatus('PNG saved');
+                }, 'image/png');
+            }
+        }
+
+        exportSvgButton.addEventListener('click', () => exportScreenshot('svg'));
+        exportPngButton.addEventListener('click', () => exportScreenshot('png'));
 
         // Drag functionality for SVG container
         let isDragging = false;
